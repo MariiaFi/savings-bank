@@ -62,4 +62,3 @@ contract SavingsBank {
         Donation memory d = donations[index];
         return (d.sender, d.amount);
     }
-}
