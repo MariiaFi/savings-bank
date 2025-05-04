@@ -50,3 +50,16 @@ contract SavingsBank {
         return address(this).balance;
     }
 }
+
+    // Request total number of donations
+    function getDonationCount() external view returns (uint256) {
+        return donations.length;
+    }
+
+    // Receiving a specific donation by index
+    function getDonation(uint256 index) external view returns (address, uint256) {
+        require(index < donations.length, "Invalid index");
+        Donation memory d = donations[index];
+        return (d.sender, d.amount);
+    }
+}
