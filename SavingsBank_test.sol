@@ -1,49 +1,52 @@
-// SPDX-License-Identifier: GPL-3.0
-        
-pragma solidity >=0.4.22 <0.9.0;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
 
-// This import is automatically injected by Remix
-import "remix_tests.sol"; 
+contract SavingsBank {
+    address private owner;
 
-// This import is required to use custom transaction context
-// Although it may fail compilation in 'Solidity Compiler' plugin
-// But it will work fine in 'Solidity Unit Testing' plugin
-import "remix_accounts.sol";
-import "../contracts/newcontract.sol";
+    event Deposited(address sender, uint256 amount);
+    event Withdrawn(address receiver, uint256 amount);
 
-// File name has to end with '_test.sol', this file can contain more than one testSuite contracts
-contract testSuite {
-
-    /// 'beforeAll' runs before all other tests
-    /// More special functions are: 'beforeEach', 'beforeAll', 'afterEach' & 'afterAll'
-    function beforeAll() public {
-        // <instantiate contract>
-        Assert.equal(uint(1), uint(1), "1 should be equal to 1");
+    struct Donation {
+        address sender;
+        uint256 amount;
     }
 
-    function checkSuccess() public {
-        // Use 'Assert' methods: https://remix-ide.readthedocs.io/en/latest/assert_library.html
-        Assert.ok(2 == 2, 'should be true');
-        Assert.greaterThan(uint(2), uint(1), "2 should be greater than to 1");
-        Assert.lesserThan(uint(2), uint(3), "2 should be lesser than to 3");
+    Donation[] public donations;
+
+    constructor() {
+        owner = msg.sender;
     }
 
-    function checkSuccess2() public pure returns (bool) {
-        // Use the return value (true or false) to test the contract
-        return true;
-    }
-    
-    function checkFailure() public {
-        Assert.notEqual(uint(1), uint(1), "1 should not be equal to 1");
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only the owner can do this.");
+        _;
     }
 
-    /// Custom Transaction Context: https://remix-ide.readthedocs.io/en/latest/unittesting.html#customization
-    /// #sender: account-1
-    /// #value: 100
-    function checkSenderAndValue() public payable {
-        // account index varies 0-9, value is in wei
-        Assert.equal(msg.sender, TestsAccounts.getAccount(1), "Invalid sender");
-        Assert.equal(msg.value, 100, "Invalid value");
+    function deposit() external payable {
+        require(msg.value > 0, "You must send some Ether.");
+        donations.push(Donation(msg.sender, msg.value));
+        emit Deposited(msg.sender, msg.value);
+    }
+
+    function withdraw() external onlyOwner {
+        uint256 balance = address(this).balance;
+        require(balance > 0, "No funds to withdraw.");
+        payable(owner).transfer(balance);
+        emit Withdrawn(owner, balance);
+    }
+
+    function getBalance() external view returns (uint256) {
+        return address(this).balance;
+    }
+
+    function getDonationCount() external view returns (uint256) {
+        return donations.length;
+    }
+
+    function getDonation(uint256 index) external view returns (address sender, uint256 amount) {
+        require(index < donations.length, "Invalid index");
+        Donation memory d = donations[index];
+        return (d.sender, d.amount);
     }
 }
-    
