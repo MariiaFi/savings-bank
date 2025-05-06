@@ -1,124 +1,33 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+ Welcome to Remix 0.63.1 
 
-/**
- * @title SavingsBank - Decentralized Savings Contract
- * @notice Allows users to deposit ETH and tracks donations
- * @dev Implements owner-only withdrawals and donation tracking
- */
-contract SavingsBank {
-    /// @notice Contract owner address
-    address private immutable _owner;
+Your files are stored in indexedDB, 13.51 MB / 285.57 GB used
 
-    /// @notice Track total deposits count
-    uint256 private _totalDeposits;
-
-    /// @notice Emitted when ETH is deposited
-    /// @param sender Address of the depositor
-    /// @param amount Amount deposited in wei
-    event Deposited(address indexed sender, uint256 amount);
-
-    /// @notice Emitted when ETH is withdrawn
-    /// @param receiver Address that received the funds
-    /// @param amount Amount withdrawn in wei
-    event Withdrawn(address indexed receiver, uint256 amount);
-
-    /// @notice Donation structure
-    struct Donation {
-        address sender;
-        uint256 amount;
-        uint256 timestamp;
-    }
-
-    /// @notice Array of all donations
-    Donation[] private _donations;
-
-    /// @notice Ensures caller is the owner
-    modifier onlyOwner() {
-        require(msg.sender == _owner, "Caller is not owner");
-        _;
-    }
-
-    /// @notice Initializes contract with deploying address as owner
-    constructor() {
-        _owner = msg.sender;
-    }
-
-    /**
-     * @notice Accepts ETH deposits
-     * @dev Records donation with timestamp
-     * Emits a {Deposited} event
-     */
-    function deposit() external payable {
-        require(msg.value > 0, "Deposit amount must be positive");
-        _donations.push(Donation(msg.sender, msg.value, block.timestamp));
-        _totalDeposits++;
-        emit Deposited(msg.sender, msg.value);
-    }
-
-    /**
-     * @notice Withdraws all contract ETH to owner
-     * @dev Only callable by owner
-     * Emits a {Withdrawn} event
-     */
-    function withdraw() external onlyOwner {
-        uint256 balance = address(this).balance;
-        require(balance > 0, "No funds available");
-
-        (bool success, ) = payable(_owner).call{value: balance}("");
-        require(success, "Transfer failed");
-
-        emit Withdrawn(_owner, balance);
-    }
-
-    // =========== VIEW FUNCTIONS =========== //
-
-    /**
-     * @notice Returns current contract balance
-     * @return Current ETH balance in wei
-     */
-    function getBalance() external view returns (uint256) {
-        return address(this).balance;
-    }
-
-    /**
-     * @notice Returns total donation count
-     * @return Number of donations received
-     */
-    function getDonationCount() external view returns (uint256) {
-        return _donations.length;
-    }
-
-    /**
-     * @notice Returns donation details by index
-     * @param index Donation index to query
-     * @return sender Donor address
-     * @return amount Donation amount in wei
-     * @return timestamp Block timestamp of donation
-     */
-    function getDonation(uint256 index) 
-        external 
-        view 
-        returns (address sender, uint256 amount, uint256 timestamp) 
-    {
-        require(index < _donations.length, "Invalid index");
-        Donation memory d = _donations[index];
-        return (d.sender, d.amount, d.timestamp);
-    }
-
-    /**
-     * @notice Returns contract owner address
-     * @return Address of contract owner
-     */
-    function owner() public view returns (address) {
-        return _owner;
-    }
-
-    /**
-     * @notice Returns total deposits count
-     * @return Number of successful deposits
-     */
-    function totalDeposits() external view returns (uint256) {
-        return _totalDeposits;
-    }
-}
+You can use this terminal to: 
+Check transactions details and start debugging.
+Execute JavaScript scripts:
+ - Input a script directly in the command line interface 
+ - Select a Javascript file in the file explorer and then run `remix.execute()` or `remix.exeCurrent()`  in the command line interface 
+ - Right-click on a JavaScript file in the file explorer and then click `Run` 
+The following libraries are accessible:
+web3.js
+ethers.js 
+sol-gpt <your Solidity question here>  
+Type the library name to see available commands.
+creation of SavingsBank pending...
+[vm]from: 0x4B2...C02dbto: SavingsBank.(constructor)value: 0 weidata: 0x60a...d0033logs: 0hash: 0xd02...461d5
+status	0x1 Transaction mined and execution succeed
+transaction hash	0xd02176063ab46345a20425ae855f3195a6223c8585b1003c3dfe58197d6461d5
+block hash	0x8c00ac9b213bb217c798046c8e97b8d826ed5cc0e9cda8a52bf9476e5d35bbb3
+block number	2
+contract address	0x9ecEA68DE55F316B702f27eE389D10C2EE0dde84
+from	0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db
+to	SavingsBank.(constructor)
+gas	719744 gas
+transaction cost	625864 gas 
+execution cost	533258 gas 
+input	0x60a...d0033
+output	0x60806040526004361061006f575f3560e01c80638da5cb5b1161004d5780638da5cb5b146100dd578063d0e30db014610107578063e55a62a814610111578063ef07a81f1461013b5761006f565b806312065fe0146100735780633ccfd60b1461009d5780637d882097146100b3575b5f5ffd5b34801561007e575f5ffd5b50610087610179565b6040516100949190610638565b60405180910390f35b3480156100a8575f5ffd5b506100b1610180565b005b3480156100be575f5ffd5b506100c761038e565b6040516100d49190610638565b60405180910390f35b3480156100e8575f5ffd5b506100f1610396565b6040516100fe9190610690565b60405180910390f35b61010f6103bd565b005b34801561011c575f5ffd5b50610125610518565b6040516101329190610638565b60405180910390f35b348015610146575f5ffd5b50610161600480360381019061015c91906106d7565b610524565b60405161017093929190610702565b60405180910390f35b5f47905090565b7f0000000000000000000000004b20993bc481177ec7e8f571cecae8a9e22c02db73ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161461020e576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040161020590610791565b60405180910390fd5b5f4790505f8111610254576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040161024b906107f9565b60405180910390fd5b5f7f0000000000000000000000004b20993bc481177ec7e8f571cecae8a9e22c02db73ffffffffffffffffffffffffffffffffffffffff168260405161029990610844565b5f6040518083038185875af1925050503d805f81146102d3576040519150601f19603f3d011682016040523d82523d5f602084013e6102d8565b606091505b505090508061031c576040517f08c379a0000000000000000000000000000000000000000000000000000000008152600401610313906108a2565b60405180910390fd5b7f0000000000000000000000004b20993bc481177ec7e8f571cecae8a9e22c02db73ffffffffffffffffffffffffffffffffffffffff167f7084f5476618d8e60b11ef0d7d3f06914655adb8793e28ff7f018d4c76d505d5836040516103829190610638565b60405180910390a25050565b5f5f54905090565b5f7f0000000000000000000000004b20993bc481177ec7e8f571cecae8a9e22c02db905090565b5f34116103ff576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004016103f69061090a565b60405180910390fd5b600160405180606001604052803373ffffffffffffffffffffffffffffffffffffffff16815260200134815260200142815250908060018154018082558091505060019003905f5260205f2090600302015f909190919091505f820151815f015f6101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550602082015181600101556040820151816002015550505f5f8154809291906104c390610955565b91905055503373ffffffffffffffffffffffffffffffffffffffff167f2da466a7b24304f47e87fa2e1e5a81b9831ce54fec19055ce277ca2f39ba42c43460405161050e9190610638565b60405180910390a2565b5f600180549050905090565b5f5f5f600180549050841061056e576040517f08c379a0000000000000000000000000000000000000000000000000000000008152600401610565906109e6565b60405180910390fd5b5f6001858154811061058357610582610a04565b5b905f5260205f2090600302016040518060600160405290815f82015f9054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001600182015481526020016002820154815250509050805f015181602001518260400151935093509350509193909250565b5f819050919050565b61063281610620565b82525050565b5f60208201905061064b5f830184610629565b92915050565b5f73ffffffffffffffffffffffffffffffffffffffff82169050919050565b5f61067a82610651565b9050919050565b61068a81610670565b82525050565b5f6020820190506106a35f830184610681565b92915050565b5f5ffd5b6106b681610620565b81146106c0575f5ffd5b50565b5f813590506106d1816106ad565b92915050565b5f602082840312156106ec576106eb6106a9565b5b5f6106f9848285016106c3565b91505092915050565b5f6060820190506107155f830186610681565b6107226020830185610629565b61072f6040830184610629565b949350505050565b5f82825260208201905092915050565b7f43616c6c6572206973206e6f74206f776e6572000000000000000000000000005f82015250565b5f61077b601383610737565b915061078682610747565b602082019050919050565b5f6020820190508181035f8301526107a88161076f565b9050919050565b7f4e6f2066756e647320617661696c61626c6500000000000000000000000000005f82015250565b5f6107e3601283610737565b91506107ee826107af565b602082019050919050565b5f6020820190508181035f830152610810816107d7565b9050919050565b5f81905092915050565b50565b5f61082f5f83610817565b915061083a82610821565b5f82019050919050565b5f61084e82610824565b9150819050919050565b7f5472616e73666572206661696c656400000000000000000000000000000000005f82015250565b5f61088c600f83610737565b915061089782610858565b602082019050919050565b5f6020820190508181035f8301526108b981610880565b9050919050565b7f4465706f73697420616d6f756e74206d75737420626520706f736974697665005f82015250565b5f6108f4601f83610737565b91506108ff826108c0565b602082019050919050565b5f6020820190508181035f830152610921816108e8565b9050919050565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52601160045260245ffd5b5f61095f82610620565b91507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff820361099157610990610928565b5b600182019050919050565b7f496e76616c696420696e646578000000000000000000000000000000000000005f82015250565b5f6109d0600d83610737565b91506109db8261099c565b602082019050919050565b5f6020820190508181035f8301526109fd816109c4565b9050919050565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52603260045260245ffdfea2646970667358221220c634cbb808f882607b0c00fcd8ba9e13593345e657a2638e47f3bc763b6ff78064736f6c634300081d0033
+decoded input	{}
+decoded output	 - 
+logs	[]
+raw logs	[]
